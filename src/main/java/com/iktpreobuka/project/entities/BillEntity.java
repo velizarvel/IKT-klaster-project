@@ -1,6 +1,6 @@
 package com.iktpreobuka.project.entities;
 
-import java.util.List;
+import java.time.LocalDate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,38 +9,42 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "category")
+@Table(name = "bill")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class CategoryEntity {
+public class BillEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
-	@Column(name = "category_name")
+	@Column(name = "payment_made")
 	@NotNull
-	private String categoryName;
-	@Column(name = "category_description")
-	private String categoryDescription;
+	private Boolean paymentMade;
+	@Column(name = "payment_canceled")
+	@NotNull
+	private Boolean paymentCanceled;
+	@Column(name = "bill_created")
+	@NotNull
+	private LocalDate billCreated;
 	@Version
 	private Integer version;
-	@OneToMany(mappedBy="category", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JsonIgnore
-	private List<OfferEntity> offers;
-
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@JoinColumn(name = "offer_id")
+	private OfferEntity offer;
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@JoinColumn(name = "buyer_id")
+	private UserEntity buyer;
+	
 }

@@ -1,6 +1,6 @@
 package com.iktpreobuka.project.entities;
 
-import java.util.List;
+import java.time.LocalDate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,38 +9,39 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "category")
+@Table(name = "voucher")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-public class CategoryEntity {
+public class VoucherEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
-	@Column(name = "category_name")
+	@Column(name = "expiration_date")
 	@NotNull
-	private String categoryName;
-	@Column(name = "category_description")
-	private String categoryDescription;
+	private LocalDate expirationDate;
+	@Column(name = "isUsed")
+	@NotNull
+	private Boolean isUsed;
 	@Version
 	private Integer version;
-	@OneToMany(mappedBy="category", cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
-	@JsonIgnore
-	private List<OfferEntity> offers;
-
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@JoinColumn(name = "offer_id")
+	private OfferEntity offer;
+	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
+	@JoinColumn(name = "buyer_id")
+	private UserEntity buyer;
+	
 }
