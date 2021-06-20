@@ -26,6 +26,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VoucherEntity {
 
+	public VoucherEntity(@NotNull LocalDate expirationDate, @NotNull Boolean isUsed, OfferEntity offer,
+			UserEntity buyer) {
+		super();
+		this.expirationDate = expirationDate;
+		this.isUsed = isUsed;
+		this.offer = offer;
+		this.buyer = buyer;
+	}
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer id;
@@ -43,5 +52,5 @@ public class VoucherEntity {
 	@ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.LAZY)
 	@JoinColumn(name = "buyer_id")
 	private UserEntity buyer;
-	
+
 }

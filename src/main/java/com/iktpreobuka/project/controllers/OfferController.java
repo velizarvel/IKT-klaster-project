@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.iktpreobuka.project.entities.CategoryEntity;
 import com.iktpreobuka.project.entities.EOfferStatus;
@@ -25,6 +26,7 @@ import com.iktpreobuka.project.helpers.Validation;
 import com.iktpreobuka.project.repositories.CategoryRepository;
 import com.iktpreobuka.project.repositories.OfferRepository;
 import com.iktpreobuka.project.repositories.UserRepository;
+import com.iktpreobuka.project.services.OfferService;
 
 @RestController
 @RequestMapping(path = "/project/offers")
@@ -38,6 +40,9 @@ public class OfferController {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
+	
+	@Autowired
+	private OfferService offerService;
 
 	@GetMapping("/")
 	public List<OfferEntity> findAllOffers() {
@@ -123,19 +128,27 @@ public class OfferController {
 	}
 
 	@PutMapping("/changeOffer/{id}/status/{status}")
-	public Optional<OfferEntity> updateOfferRole(@PathVariable Integer id, @PathVariable EOfferStatus status) {
-		Optional<OfferEntity> offerDb = findOfferById(id);
-		if (offerDb.isPresent()) {
-			offerDb.get().setOfferStatus(status);
-		}
-
-		return offerDb;
+	public Optional<OfferEntity> updateOfferStatus(@PathVariable Integer id, @PathVariable EOfferStatus status) {
+		return offerService.changeOfferStatus(id, status);
 	}
 
 	@GetMapping("/findByPrice/{lowerPrice}/and/{upperPrice}")
 	public List<OfferEntity> findOffersBetweenTwoActionPrices(@PathVariable Double lowerPrice,
 			@PathVariable Double upperPrice) {
 		return offerRepository.findAllByActionPriceBetween(lowerPrice, upperPrice);
+	}
+
+	@PostMapping("/project/offers/uploadImage/{id}")
+	public OfferEntity uploadPicture(@PathVariable Integer id, String imagePath) {
+
+		OfferEntity offer = offerRepository.findById(id).orElse(null);
+		if (offer != null) {
+			offer.setImagePath(imagePath);
+			offerRepository.save(offer);
+		}
+
+		return offer;
+
 	}
 
 }
