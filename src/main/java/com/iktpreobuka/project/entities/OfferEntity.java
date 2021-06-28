@@ -50,7 +50,7 @@ public class OfferEntity {
 	
 	@Column(name = "offer_description")
 	@NotBlank(message = "Description must be provided.")
-	@Size(min = 5, max = 20, message = "Description name must be between {min} and {max} characters long.")
+	@Size(min = 5, max = 50, message = "Offer description must be between {min} and {max} characters long.")
 	@JsonView(Views.Public.class)
 	private String offerDescription;
 	
@@ -65,6 +65,7 @@ public class OfferEntity {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	@JsonView(Views.Public.class)
 	private LocalDate offerExpires;
+	
 	@Column(name = "regular_price")
 	@Min(value = 1, message = "Regular price must be greater than 1.")
 	@JsonView(Views.Public.class)
@@ -76,7 +77,6 @@ public class OfferEntity {
 	private Double actionPrice;
 	
 	@Column(name = "image_path")
-	@NotBlank(message = "Image path must be provided.")
 	@JsonView(Views.Public.class)
 	private String imagePath;
 	

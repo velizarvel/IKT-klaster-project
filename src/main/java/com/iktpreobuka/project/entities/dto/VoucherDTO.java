@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import javax.validation.constraints.AssertFalse;
 import javax.validation.constraints.Future;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iktpreobuka.project.entities.OfferEntity;
@@ -29,10 +30,10 @@ public class VoucherDTO {
 	@AssertFalse
 	protected Boolean isUsed;
 
-	@NotBlank(message = "Offer must be provided.")
+	@NotNull(message = "Offer must be provided.")
 	private OfferEntity offer;
 
-	@NotBlank(message = "Buyer must be provided.")
+	@NotNull(message = "Buyer must be provided.")
 	private UserEntity buyer;
 
 }

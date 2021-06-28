@@ -3,8 +3,8 @@ package com.iktpreobuka.project.entities.dto;
 import java.time.LocalDate;
 
 import javax.validation.constraints.AssertFalse;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.PastOrPresent;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.iktpreobuka.project.entities.OfferEntity;
@@ -23,15 +23,15 @@ public class BillDTO {
 
 	private Integer id;
 
-	@NotBlank(message = "Payment made must not be null or blank.")
+	@NotNull(message = "Payment made must not be null or blank.")
 	@AssertFalse
 	private Boolean paymentMade;
 
-	@NotBlank(message = "Payment canceled must not be null or blank.")
+	@NotNull(message = "Payment canceled must not be null or blank.")
 	@AssertFalse
 	private Boolean paymentCanceled;
 
-	@Past(message = "Bill created can not be in the future.")
+	@PastOrPresent(message = "Bill created can not be in the future.")
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private LocalDate billCreated;
 

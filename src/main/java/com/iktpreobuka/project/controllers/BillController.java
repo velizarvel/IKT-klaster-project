@@ -23,8 +23,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.iktpreobuka.project.entities.BillEntity;
+import com.iktpreobuka.project.entities.CategoryEntity;
 import com.iktpreobuka.project.entities.dto.BillDTO;
+import com.iktpreobuka.project.entities.dto.ReportDTO;
 import com.iktpreobuka.project.repositories.BillRepository;
+import com.iktpreobuka.project.repositories.CategoryRepository;
 import com.iktpreobuka.project.security.Views;
 import com.iktpreobuka.project.services.BillService;
 import com.iktpreobuka.project.utils.RESTError;
@@ -39,6 +42,9 @@ public class BillController {
 
 	@Autowired
 	private BillRepository billRepository;
+
+	@Autowired
+	private CategoryRepository categoryRepository;
 
 	@GetMapping("/")
 	public ResponseEntity<?> findAllBills() {
@@ -165,11 +171,43 @@ public class BillController {
 	}
 
 	@GetMapping("/findByDate/{startDate}/and/{endDate}")
-	public ResponseEntity<?> findBillByBuyer(@PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
+	public ResponseEntity<?> findBillsByDate(@PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
 			@PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate endDate) {
 
 		try {
 			return new ResponseEntity<>(billRepository.findByBillCreatedBetween(startDate, endDate), HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Exception occurred: " + e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping("generateReportByDate/{startDate}/and/{endDate}")
+	public ResponseEntity<?> generateReportByDate(@PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
+			@PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate endDate) {
+		try {
+			ReportDTO report = billService.generateReportByDate(startDate, endDate);
+			return new ResponseEntity<>(report, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<RESTError>(
+					new RESTError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Exception occurred: " + e.getMessage()),
+					HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@GetMapping("generateReport/{startDate}/and/{endDate}/category/{categoryId}")
+	public ResponseEntity<?> generateReportByDateAndCategory(
+			@PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate startDate,
+			@PathVariable @DateTimeFormat(iso = ISO.DATE) LocalDate endDate, @PathVariable Integer categoryId) {
+		try {
+			Optional<CategoryEntity> category = categoryRepository.findById(categoryId);
+			if (!category.isPresent()) {
+				return new ResponseEntity<>(new RESTError(HttpStatus.NOT_FOUND.value(), "Category not found"),
+						HttpStatus.NOT_FOUND);
+			}
+			ReportDTO report = billService.generateReportByDateAndCategory(startDate, endDate, category.get());
+			return new ResponseEntity<>(report, HttpStatus.OK);
 		} catch (Exception e) {
 			return new ResponseEntity<RESTError>(
 					new RESTError(HttpStatus.INTERNAL_SERVER_ERROR.value(), "Exception occurred: " + e.getMessage()),
