@@ -1,9 +1,12 @@
-package com.iktpreobuka.project.helpers;
+package com.iktpreobuka.project.utils;
 
 import java.security.InvalidParameterException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
 
 public class Validation {
 
@@ -18,6 +21,11 @@ public class Validation {
 		}
 
 		return optional.get();
+	}
+
+	public static Object createErrorMessage(BindingResult result) {
+		return result.getAllErrors().stream().map(ObjectError::getDefaultMessage).collect(Collectors.joining(" \n"));
+
 	}
 
 }
